@@ -11,11 +11,13 @@ const GridBody = (props) => {
           <tbody>
             {row?.map((item,index) => {
               if (column?.length > 0) {    
+                console.log(item);              
                 return (
                   <Tr key={index} uid={item.uid}>
                     {
-                      column?.map((filterItem,index) => {
-                        if (filterItem.status && filterItem.field === Object.keys(item)[index]) {
+                      column.map((filterItem,index) => {                        
+                        if (filterItem.status) {
+                          console.log(`buradayım. ${item} item[filterItem.field] : ${filterItem.field}`); 
                           return (
                             <Td key={index}>
                               {item[filterItem.field]}
@@ -26,6 +28,21 @@ const GridBody = (props) => {
                     }
                   </Tr>
                 )                
+              }else {
+                return (
+                  <Tr key={index} uid={item.uid}>
+                    {
+                      
+                      Object.keys(item).map((value,index) => {                       
+                        return (
+                          <Td key={index}>
+                            {item[value]}
+                          </Td>
+                        )
+                      })
+                    }
+                  </Tr>
+                )
               }              
             }) }               
           </tbody>      
@@ -33,3 +50,10 @@ const GridBody = (props) => {
 }
 
 export default GridBody;
+
+/*
+propTypes: {
+  row: PropTypes.array,
+  column: PropTypes.array,
+}
+*/

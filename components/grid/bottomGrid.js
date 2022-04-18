@@ -1,27 +1,21 @@
 import { v4 as uidV4 } from 'uuid';
 import {useState,useEffect,useCallback, useMemo} from 'react';
-import GridFilter from "./filter"
-import GridTable from './table/gridTable';
+import GridTable from './table/table';
 import GridThead from "./table/thead"
 import GridBody from "./table/body"
 import axios from 'axios';
+import AddRow from './addRow';
 
-const Grid = (props) => {
+const BottomGrid = (props) => {
   const {
-    children,
     data,
     columns,
     filter,
-    onFilter,
-    onRowClick,
-    onRowDoubleClick,
   } = props;
 
   const [gridData, setGridData] = useState([]);
-  const [gridFilterData, setGridFilterData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);   
   const [gridCol, setGridCol] = useState([]);
-  const [gridFilter, setGridFilter] = useState([]);
   
   /** static data - grid column */
   const gridColumn = useMemo(() => {
@@ -65,6 +59,7 @@ const Grid = (props) => {
     ]
   }, []);
 
+
   /* data set*/
   useEffect(() => {      
     const getApi = async()=>{
@@ -77,49 +72,67 @@ const Grid = (props) => {
       setGridData(getData);
       setTotalCount(getData.length);
       setGridCol(gridColumn);    
-      const getFilter = [...new Set(await getData.map((item) => item.contract))];
-      setGridFilter(getFilter);
-      setGridFilterData(getData);   
       return getData;
     }
     getApi();
   }, [])
 
-  
-  /* grid column filter and set*/
-  const onSettingsMenuItemsClick = useCallback((e) => {
-      const filterColumn = gridCol.map((item) => {
-        if (item.field === e.target.name) {         
-          item.status = e.target.checked;
-        }
-        return item;        
-      });
-      setGridCol(filterColumn);        
-  },[gridCol]);
 
-
-  /* grid filter and set*/
-  const onFilterChange = useCallback((e) => { 
-    const filterData = gridFilterData.filter((item) => {
-      return item.contract.toLowerCase().includes(e.target.value.toLowerCase());
-    });
-    setGridData(filterData);
-  },[gridData]);
+  /** addRow */
+  const [show, setShow] = useState(false);
    
+  const onAddRow = useCallback(() => {
+    if(!show){
+      setShow(true);
+    }
+  }, [show])
 
-    return (
-        <>
-            <GridFilter 
-              column={gridCol} 
-              onSettingsMenuItemsClick={onSettingsMenuItemsClick} 
-              filter={gridFilter}
-              onFilterChange={onFilterChange}/>
-            <GridTable>
-              <GridThead column={gridCol}/>               
-              <GridBody row={gridData} column={gridCol}/>              
-            </GridTable>
-        </>
-    )
+
+  /** 
+   * There are many methods of getting the form.
+   * I preferred the form submit event
+   * 
+   * It can be caught from the change event of the form elements. or reducer can be used.
+   */
+  const onFormSubmit = useCallback((e) => {
+      e.preventDefault();
+      const newData = {
+          uid: uidV4(),
+          id: e.target.elements?.id?.value.toString(),
+          contract: e.target.elements?.contract?.value.toString(),
+          bidding: e.target.elements?.bidding?.value.toString(),
+          data: e.target.elements?.data?.value.toString(),
+      }
+      const newGridData = [...gridData, newData];
+      setGridData(newGridData);
+      setTotalCount(newGridData.length);
+      setShow(false);
+      e.target.reset();
+  }, [gridData])
+  
+
+  if(!gridData.length){
+    return <div>Loading...</div>
+  }
+
+  return (
+      <>
+          <GridTable>
+            <GridThead column={gridCol}/>               
+            <GridBody row={gridData} column={gridCol}/>              
+          </GridTable>
+          <AddRow show={show} onFormSubmit={onFormSubmit} onAddRow={onAddRow}/>
+
+      </>
+  )
 }
 
-export default Grid
+export default BottomGrid
+
+/* 
+propTypes: {
+  data: PropTypes.array,
+  columns: PropTypes.array,
+  filter: PropTypes.array,
+}
+*/

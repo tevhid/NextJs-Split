@@ -3,10 +3,14 @@ import Split from 'react-split'
 import BottomLeftSplit from './bottom/bottomLeftSplit'
 import BottomRightSplit from './bottom/bottomRightSplit'
 import {useLocalStorage} from '../../hooks/useLocalStorage'
+import { useDispatch } from 'react-redux'
+import { setBottomSizes } from '../../app/features/splitPositionSlice';
+
 
 const BottomSplit = (props) => {
   const {children } = props;
 
+  const dispatch = useDispatch();
   const [options, setOptions] = useState({
     sizes: [60, 40],
     minSize: 0,
@@ -23,7 +27,11 @@ const BottomSplit = (props) => {
     setOptions(bottomSplitStorageOptions)
   }, [bottomSplitStorageOptions])
 
-  
+  useEffect(() => {
+    dispatch(setBottomSizes(options.sizes));
+  }, [options.sizes])
+
+
   const splitOptions = useMemo (() => {
     return {
       ...options,

@@ -3,10 +3,13 @@ import Split from 'react-split'
 import TopLeftSplit from './top/topLeftSplit'
 import TopRightSplit from './top/topRightSplit'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
+import { useDispatch } from 'react-redux'
+import { setTopSizes } from '../../app/features/splitPositionSlice';
 
 const TopSplit = (props) => {
   const { children } = props
 
+  const dispatch = useDispatch();
   const [options, setOptions] = useState({
     sizes: [60, 40],
     minSize: 0,
@@ -24,6 +27,11 @@ const TopSplit = (props) => {
   }, [topSplitStorageOptions])
 
   
+  useEffect(() => {
+    dispatch(setTopSizes(options.sizes));
+  }, [options.sizes])
+
+
   const splitOptions = useMemo (() => {
     return {
       ...options,
