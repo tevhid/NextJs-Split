@@ -62,7 +62,6 @@ const BottomGrid = (props) => {
 
   /* data set*/
   useEffect(() => {     
-    console.log(router); 
     const getApi = async()=>{
       const response = await axios.get('/api/data');
       const getData = await response.data;
