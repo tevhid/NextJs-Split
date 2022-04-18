@@ -111,9 +111,9 @@ const BottomGrid = (props) => {
   }, [gridData])
   
 
-  if(!gridData.length){
-    return <div>Loading...</div>
-  }
+  // if(!gridData.length){
+  //   return <div>Loading...</div>
+  // }
 
   return (
       <>

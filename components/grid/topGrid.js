@@ -103,9 +103,9 @@ const TopGrid = (props) => {
   },[gridData]);
    
   
-  if (gridData.length === 0) {
-    return <div>Loading...</div>
-  }
+  // if (gridData.length === 0) {
+  //   return <div>Loading...</div>
+  // }
 
     return (
         <>
