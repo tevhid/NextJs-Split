@@ -64,7 +64,7 @@ const TopGrid = (props) => {
   /* data set*/
   useEffect(() => {      
     const getApi = async()=>{
-      const response = await axios.get('http://localhost:3000/api/data');
+      const response = await axios.get('/api/data');
       const getData = await response.data;
       await getData.map((item) => {
         item.uid = uidV4();
